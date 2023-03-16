@@ -16,4 +16,5 @@ class SHOOTERPROJECT_API ASPCharacter : public AALSCharacter
 {
 	GENERATED_BODY()
 	
+	
 };

@@ -3,15 +3,20 @@
 
 #include "Player/SPPlayerController.h"
 
+#include "EnhancedActionKeyMapping.h"
+#include "EnhancedInputComponent.h"
+#include "InputMappingContext.h"
+#include "Player/SPCharacter.h"
+
 DEFINE_LOG_CATEGORY_STATIC(SPPlayerControllerLog, All, All)
+
 
 void ASPPlayerController::FirstWeaponAction(const FInputActionValue& Value)
 {
-	UE_LOG(SPPlayerControllerLog, Error, TEXT("From FirstWeaponAction"))
+	PossessedCharacter->SetOverlayState(EALSOverlayState::PistolOneHanded);
 }
 
 void ASPPlayerController::SecondWeaponAction(const FInputActionValue& Value)
 {
-	UE_LOG(SPPlayerControllerLog, Error, TEXT("From SecondWeaponAction"))
-
+	PossessedCharacter->SetOverlayState(EALSOverlayState::Rifle);
 }

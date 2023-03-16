@@ -16,12 +16,13 @@ class SHOOTERPROJECT_API ASPPlayerController : public AALSPlayerController
 {
 	GENERATED_BODY()
 
-protected:
 
+protected:
 	UFUNCTION()
 	void FirstWeaponAction(const FInputActionValue& Value);
-	
+
 	UFUNCTION()
 	void SecondWeaponAction(const FInputActionValue& Value);
-};
 
+	
+};
