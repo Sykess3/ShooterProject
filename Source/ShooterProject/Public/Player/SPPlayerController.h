@@ -24,5 +24,7 @@ protected:
 	UFUNCTION()
 	void SecondWeaponAction(const FInputActionValue& Value);
 
+	UFUNCTION()
+	void FireAction(const FInputActionValue& Value);
 	
 };

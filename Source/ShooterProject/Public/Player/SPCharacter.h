@@ -6,15 +6,22 @@
 #include "Character/ALSCharacter.h"
 #include "SPCharacter.generated.h"
 
+class USPWeaponComponent;
 /**
  * 
  */
-class AALSCharacter;
 
 UCLASS()
 class SHOOTERPROJECT_API ASPCharacter : public AALSCharacter
 {
 	GENERATED_BODY()
+
+public:
+	ASPCharacter(const FObjectInitializer& ObjectInitializer);	
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	USPWeaponComponent* WeaponComponent = nullptr;
 	
 	
+	virtual void OnOverlayStateChanged(const EALSOverlayState PreviousState) override;
 };
