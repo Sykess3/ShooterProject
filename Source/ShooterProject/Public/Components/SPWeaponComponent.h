@@ -32,11 +32,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats")
 	TEnumAsByte<ECollisionChannel> CollisionChannel;
-	
-	
 
-public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats|Damage")
+	float Damage;
 
-		
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats|Damage")
+	TSubclassOf<UDamageType> DamageType;
+
+
 };

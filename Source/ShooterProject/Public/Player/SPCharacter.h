@@ -7,6 +7,8 @@
 #include "SPCharacter.generated.h"
 
 class USPWeaponComponent;
+class UTextRenderComponent;
+class USPHealthComponent;
 /**
  * 
  */
@@ -17,11 +19,19 @@ class SHOOTERPROJECT_API ASPCharacter : public AALSCharacter
 	GENERATED_BODY()
 
 public:
-	ASPCharacter(const FObjectInitializer& ObjectInitializer);	
+	ASPCharacter(const FObjectInitializer& ObjectInitializer);
+
+	virtual void PreInitializeComponents() override;
+	virtual void BeginPlay() override;
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	USPWeaponComponent* WeaponComponent = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	UTextRenderComponent* HealthTextRenderComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components")
+	USPHealthComponent* HealthComponent;
 	
-	
-	virtual void OnOverlayStateChanged(const EALSOverlayState PreviousState) override;
+	void OnHealthChangedHandler(float Amount);
 };

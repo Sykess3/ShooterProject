@@ -1,12 +1,16 @@
-
 #include "Components/SPWeaponComponent.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Player/SPCharacter.h"
 
 USPWeaponComponent::USPWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	
+}
+
+void USPWeaponComponent::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void USPWeaponComponent::Shoot()
@@ -14,7 +18,7 @@ void USPWeaponComponent::Shoot()
 	ASPCharacter* Player = Cast<ASPCharacter>(GetOwner());
 	check(Player);
 
-	const AController* Controller = Player->GetController();
+	AController* Controller = Player->GetController();
 	check(Controller);
 
 	FVector ViewLocation;
@@ -22,9 +26,10 @@ void USPWeaponComponent::Shoot()
 
 	Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
 
-	USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(WeaponMeshComponent.GetComponent(Player));
+	USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(
+		WeaponMeshComponent.GetComponent(Player));
 	check(SkeletalMeshComponent);
-	
+
 	const FTransform SocketTransform = SkeletalMeshComponent->GetSocketTransform(MuzzleSocketName);
 	const FVector TraceStart = ViewLocation;
 	const FVector TraceDirection = ViewRotation.Vector();
@@ -40,26 +45,16 @@ void USPWeaponComponent::Shoot()
 	{
 		DrawDebugLine(GetWorld(), SocketTransform.GetLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f);
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Blue, false, 5.0f);
+		
+		AActor* HitActor = HitResult.GetActor();
+		if (HitActor)
+		{
+			UGameplayStatics::ApplyPointDamage(HitActor, Damage, TraceEnd - TraceStart, HitResult, Controller, Player,
+			                                   DamageType);
+		}
 	}
 	else
 	{
 		DrawDebugLine(GetWorld(), SocketTransform.GetLocation(), TraceEnd, FColor::Red, false, 3.0f);
 	}
 }
-
-
-// Called when the game starts
-void USPWeaponComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	
-	
-}
-
-void USPWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-}
-
