@@ -18,10 +18,14 @@ ASPBaseWeaponActor::ASPBaseWeaponActor()
 void ASPBaseWeaponActor::BeginPlay()
 {
 	Super::BeginPlay();
+	DelayBetweenShots = 1 / FireRateInSecond;
 }
 
 void ASPBaseWeaponActor::TryShoot(AActor* WeaponOwner)
 {
+	if (!CanShoot)
+		return;
+	
 	FVector ViewLocation;
 	FRotator ViewRotation;
 
@@ -55,4 +59,15 @@ void ASPBaseWeaponActor::TryShoot(AActor* WeaponOwner)
 	{
 		DrawDebugLine(GetWorld(), SocketTransform.GetLocation(), TraceEnd, FColor::Red, false, 3.0f);
 	}
+
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([&]()
+	{
+		UE_LOG(LogTemp, Error, TEXT("CanShoot"))
+		CanShoot = true;
+	});
+	
+	
+	GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, TimerDelegate, DelayBetweenShots, false, DelayBetweenShots);
+	CanShoot = false;
 }

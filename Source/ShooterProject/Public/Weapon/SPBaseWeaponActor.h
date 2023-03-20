@@ -16,6 +16,9 @@ public:
 	ASPBaseWeaponActor();
 	void TryShoot(AActor* WeaponOwner);
 
+	UFUNCTION(BlueprintGetter)
+	bool GetCanShoot() const { return CanShoot; };
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -32,9 +35,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats")
 	TEnumAsByte<ECollisionChannel> CollisionChannel;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats")
+	float FireRateInSecond;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats|Damage")
 	float Damage;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats|Damage")
 	TSubclassOf<UDamageType> DamageType;
+private:
+	bool CanShoot = true;
+	FTimerHandle FireRateTimerHandle;
+	float DelayBetweenShots;
 };

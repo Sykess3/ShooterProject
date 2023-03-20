@@ -55,5 +55,6 @@ protected:
 
 private:
 	void OnHealthChangedHandler(float Amount);
+	void OnDeathHandler();
 	void AttachWeaponToHand();
 };

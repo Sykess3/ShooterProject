@@ -4,6 +4,7 @@
 #include "Player/SPCharacter.h"
 #include "Components/SPHealthComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon/SPBaseWeaponActor.h"
 
 ASPCharacter::ASPCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -20,7 +21,9 @@ void ASPCharacter::PreInitializeComponents()
 {
 	Super::PreInitializeComponents();
 	HealthComponent->OnHealthChanged.AddUObject(this, &ASPCharacter::OnHealthChangedHandler);
+	HealthComponent->OnDeath.AddUObject(this, &ASPCharacter::OnDeathHandler);
 }
+
 
 void ASPCharacter::BeginPlay()
 {
@@ -72,5 +75,12 @@ void ASPCharacter::OnOverlayStateChanged(EALSOverlayState PreviousState)
 void ASPCharacter::OnHealthChangedHandler(float Amount)
 {
 	HealthTextRenderComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Amount)));
+}
+
+void ASPCharacter::OnDeathHandler()
+{
+	RagdollAction();
+	GetCharacterMovement()->DisableMovement();
+	SetLifeSpan(4.0f);
 }
 
