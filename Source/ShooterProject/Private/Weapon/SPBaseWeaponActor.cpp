@@ -21,11 +21,42 @@ void ASPBaseWeaponActor::BeginPlay()
 	DelayBetweenShots = 1 / FireRateInSecond;
 }
 
-void ASPBaseWeaponActor::TryShoot(AActor* WeaponOwner)
+void ASPBaseWeaponActor::StartFire()
 {
-	if (!CanShoot)
-		return;
+	GetWorld()->GetTimerManager().SetTimer(FireRateTimer, this, &ASPBaseWeaponActor::Shoot, DelayBetweenShots,
+	                                       true);
+}
+
+void ASPBaseWeaponActor::StopFire()
+{
+	GetWorld()->GetTimerManager().ClearTimer(FireRateTimer);
+}
+
+void ASPBaseWeaponActor::Shoot()
+{
+	SpendAmmo();
+	FVector TraceStart, TraceEnd;
+	GetTraceData(GetOwner(), TraceStart, TraceEnd);
+
+	FHitResult HitResult = MakeHit(GetOwner(), TraceStart, TraceEnd);
+
+	if (HitResult.bBlockingHit)
+	{
+		DrawDebugLine(GetWorld(), GetMuzzleLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f);
+		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Blue, false, 5.0f);
+
+		FVector HitFromDirection = TraceEnd - TraceStart;
+		ApplyDamage(GetOwner(), HitResult, HitFromDirection);
+	}
+	else
+	{
+		DrawDebugLine(GetWorld(), GetMuzzleLocation(), TraceEnd, FColor::Red, false, 3.0f);
+	}
 	
+}
+
+void ASPBaseWeaponActor::GetTraceData(AActor* WeaponOwner, FVector& TraceStart, FVector& TraceEnd)
+{
 	FVector ViewLocation;
 	FRotator ViewRotation;
 
@@ -33,41 +64,77 @@ void ASPBaseWeaponActor::TryShoot(AActor* WeaponOwner)
 	check(Controller);
 	Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
 
-	const FTransform SocketTransform = WeaponMeshComponent->GetSocketTransform(MuzzleSocketName);
-	const FVector TraceStart = ViewLocation;
+	TraceStart = ViewLocation;
 	const FVector TraceDirection = ViewRotation.Vector();
-	const FVector TraceEnd = TraceStart + TraceDirection * MaxShootDistance;
+	TraceEnd = TraceStart + TraceDirection * MaxShootDistance;
+}
 
+void ASPBaseWeaponActor::ApplyDamage(AActor* WeaponOwner, FHitResult HitResult, FVector HitFromDirection)
+{
+	if (AActor* HitActor = HitResult.GetActor())
+	{
+		UGameplayStatics::ApplyPointDamage(HitActor, Damage, HitFromDirection, HitResult,
+		                                   WeaponOwner->GetInstigatorController(),
+		                                   WeaponOwner,
+		                                   DamageType);
+	}
+}
+
+void ASPBaseWeaponActor::OnDeathHandler()
+{
+	StopFire();
+}
+
+
+bool ASPBaseWeaponActor::IsAmmoBagEmpty() const
+{
+	return AmmoData.AmountInBag == 0;
+}
+
+FVector ASPBaseWeaponActor::GetMuzzleLocation()
+{
+	return WeaponMeshComponent->GetSocketLocation(MuzzleSocketName);
+}
+
+bool ASPBaseWeaponActor::IsCurrentClipEmpty() const
+{
+	return AmmoData.CurrentClipAmount == 0;
+}
+
+void ASPBaseWeaponActor::ChangeClip()
+{
+	if (AmmoData.ClipCapacity > AmmoData.AmountInBag)
+	{
+		AmmoData.CurrentClipAmount = AmmoData.AmountInBag;
+		AmmoData.AmountInBag = 0;
+	}
+	else
+	{
+		AmmoData.CurrentClipAmount = AmmoData.ClipCapacity;
+		AmmoData.AmountInBag -= AmmoData.ClipCapacity;
+	}
+}
+
+void ASPBaseWeaponActor::LogAmmo()
+{
+}
+
+void ASPBaseWeaponActor::SpendAmmo()
+{
+	if (IsCurrentClipEmpty() && !IsAmmoBagEmpty())
+	{
+		ChangeClip();
+	}
+
+	--AmmoData.CurrentClipAmount;
+}
+
+FHitResult ASPBaseWeaponActor::MakeHit(AActor* WeaponOwner, const FVector TraceStart, const FVector TraceEnd)
+{
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(WeaponOwner);
 
 	FHitResult HitResult;
 	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, CollisionChannel, CollisionParams);
-
-	if (HitResult.bBlockingHit)
-	{
-		DrawDebugLine(GetWorld(), SocketTransform.GetLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f);
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Blue, false, 5.0f);
-
-		if (AActor* HitActor = HitResult.GetActor())
-		{
-			UGameplayStatics::ApplyPointDamage(HitActor, Damage, TraceEnd - TraceStart, HitResult, Controller, WeaponOwner,
-											   DamageType);
-		}
-	}
-	else
-	{
-		DrawDebugLine(GetWorld(), SocketTransform.GetLocation(), TraceEnd, FColor::Red, false, 3.0f);
-	}
-
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindLambda([&]()
-	{
-		UE_LOG(LogTemp, Error, TEXT("CanShoot"))
-		CanShoot = true;
-	});
-	
-	
-	GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, TimerDelegate, DelayBetweenShots, false, DelayBetweenShots);
-	CanShoot = false;
+	return HitResult;
 }

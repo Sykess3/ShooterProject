@@ -30,7 +30,8 @@ public:
 
 	virtual void PreInitializeComponents() override;
 	virtual void BeginPlay() override;
-	void Shoot();
+	void StartFire();
+	void StopFire();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
@@ -56,5 +57,5 @@ protected:
 private:
 	void OnHealthChangedHandler(float Amount);
 	void OnDeathHandler();
-	void AttachWeaponToHand();
+	void AttachWeaponToHand() const;
 };

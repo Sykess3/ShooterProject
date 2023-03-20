@@ -2,6 +2,8 @@
 
 
 #include "Player/SPCharacter.h"
+
+#include "Components/CapsuleComponent.h"
 #include "Components/SPHealthComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -30,16 +32,24 @@ void ASPCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ASPCharacter::Shoot()
+void ASPCharacter::StartFire()
 {
 	if (WeaponInUse)
 	{
-		WeaponInUse->TryShoot(this);
+		WeaponInUse->StartFire();
+	}
+}
+
+void ASPCharacter::StopFire()
+{
+	if (WeaponInUse)
+	{
+		WeaponInUse->StopFire();
 	}
 }
 
 
-void ASPCharacter::AttachWeaponToHand()
+void ASPCharacter::AttachWeaponToHand() const
 {
 	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
 	WeaponInUse->AttachToComponent(GetMesh(), AttachmentRules, HoldWeaponSocket);
@@ -53,7 +63,10 @@ void ASPCharacter::ChangeWeaponSlot_Implementation(const EWeaponSlot WeaponSlot)
 		WeaponInUse->Destroy();
 	}
 	const int8 SlotIndex = static_cast<int8>(WeaponSlot);
-	WeaponInUse = World->SpawnActor<ASPBaseWeaponActor>(WeaponClasses[SlotIndex]);
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Owner = this;
+	SpawnParameters.Instigator = GetInstigator();
+	WeaponInUse = World->SpawnActor<ASPBaseWeaponActor>(WeaponClasses[SlotIndex], SpawnParameters);
 	check(WeaponInUse);
 
 	AttachWeaponToHand();
@@ -81,6 +94,9 @@ void ASPCharacter::OnDeathHandler()
 {
 	RagdollAction();
 	GetCharacterMovement()->DisableMovement();
+	Controller->ChangeState(NAME_Spectating);
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	
 	SetLifeSpan(4.0f);
 }
 

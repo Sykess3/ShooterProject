@@ -3,9 +3,12 @@
 
 #include "Player/SPPlayerController.h"
 
+#include "EnhancedInputComponent.h"
+#include "InputMappingContext.h"
 #include "Player/SPCharacter.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SPPlayerControllerLog, All, All)
+
 
 
 void ASPPlayerController::OnPossess(APawn* InPawn)
@@ -13,6 +16,14 @@ void ASPPlayerController::OnPossess(APawn* InPawn)
 	Super::OnPossess(InPawn);
 
 	SPCharacter = Cast<ASPCharacter>(PossessedCharacter);
+}
+
+void ASPPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
+	EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &ASPPlayerController::OnStartFire);
+	EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ASPPlayerController::OnStopFire);
 }
 
 void ASPPlayerController::FirstWeaponAction(const FInputActionValue& Value)
@@ -25,9 +36,14 @@ void ASPPlayerController::SecondWeaponAction(const FInputActionValue& Value)
 	PossessedCharacter->SetOverlayState(EALSOverlayState::Rifle);
 }
 
-void ASPPlayerController::FireAction(const FInputActionValue& Value)
+void ASPPlayerController::OnStartFire()
 {
-	SPCharacter->Shoot();
+	SPCharacter->StartFire();
 }
+
+void ASPPlayerController::OnStopFire()
+{
+	SPCharacter->StopFire();
+} 
 
 

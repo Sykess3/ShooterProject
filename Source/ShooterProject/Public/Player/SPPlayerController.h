@@ -7,6 +7,7 @@
 #include "InputActionValue.h"
 #include "SPPlayerController.generated.h"
 
+class UInputAction;
 class ASPCharacter;
 /**
  * 
@@ -18,8 +19,12 @@ class SHOOTERPROJECT_API ASPPlayerController : public AALSPlayerController
 	GENERATED_BODY()
 public:
 	virtual void OnPossess(APawn* InPawn) override;
+	virtual void SetupInputComponent() override;
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category ="Input")
+	UInputAction* FireAction;
+
 	UFUNCTION()
 	void FirstWeaponAction(const FInputActionValue& Value);
 
@@ -27,9 +32,11 @@ protected:
 	void SecondWeaponAction(const FInputActionValue& Value);
 
 	UFUNCTION()
-	void FireAction(const FInputActionValue& Value);
+	void OnStartFire();
+
+	UFUNCTION()
+	void OnStopFire();
 
 	UPROPERTY()
 	ASPCharacter* SPCharacter;
-	
 };
