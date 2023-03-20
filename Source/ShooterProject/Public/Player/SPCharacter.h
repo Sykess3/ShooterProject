@@ -15,7 +15,7 @@ class ASPBaseWeaponActor;
  */
 
 UCLASS()
-class SHOOTERPROJECT_API ASPCharacter : public AALSCharacter
+class SHOOTERPROJECT_API ASPCharacter : public AALSBaseCharacter
 {
 	GENERATED_BODY()
 
@@ -38,6 +38,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Weapon")
 	ASPBaseWeaponActor* WeaponInUse;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	FName HoldWeaponSocket;
+
 
 	virtual void OnOverlayStateChanged(EALSOverlayState PreviousState) override;
 

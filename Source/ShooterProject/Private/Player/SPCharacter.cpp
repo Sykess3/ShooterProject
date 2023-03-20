@@ -12,6 +12,8 @@ ASPCharacter::ASPCharacter(const FObjectInitializer& ObjectInitializer) : Super(
 
 	HealthTextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>("TextRenderComponent");
 	HealthTextRenderComponent->SetupAttachment(GetRootComponent());
+
+	HoldWeaponSocket = TEXT("VB RHS_ik_hand_gun");
 }
 
 void ASPCharacter::PreInitializeComponents()
@@ -60,5 +62,6 @@ void ASPCharacter::SpawnRifle()
 	}
 	check(WeaponInUse);
 
-	AttachToHand(nullptr, WeaponInUse->GetSkeletalMesh(), nullptr, false, FVector::Zero());
+	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
+	WeaponInUse->AttachToComponent(GetMesh(), AttachmentRules, HoldWeaponSocket);
 }

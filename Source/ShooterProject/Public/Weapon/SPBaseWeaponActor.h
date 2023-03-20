@@ -16,9 +16,6 @@ public:
 	ASPBaseWeaponActor();
 	void Shoot(AActor* WeaponOwner);
 
-	UFUNCTION(BlueprintGetter)
-	USkeletalMesh* GetSkeletalMesh() const { return  WeaponMeshComponent->GetSkeletalMeshAsset();}
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
