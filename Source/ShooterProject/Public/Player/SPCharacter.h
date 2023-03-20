@@ -9,6 +9,7 @@
 class USPWeaponComponent;
 class UTextRenderComponent;
 class USPHealthComponent;
+class ASPBaseWeaponActor;
 /**
  * 
  */
@@ -23,15 +24,25 @@ public:
 
 	virtual void PreInitializeComponents() override;
 	virtual void BeginPlay() override;
-protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
-	USPWeaponComponent* WeaponComponent = nullptr;
+	void Shoot();
 
+protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	UTextRenderComponent* HealthTextRenderComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components")
 	USPHealthComponent* HealthComponent;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon")
+	TSubclassOf<ASPBaseWeaponActor> WeaponClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Weapon")
+	ASPBaseWeaponActor* WeaponInUse;
+
+	virtual void OnOverlayStateChanged(EALSOverlayState PreviousState) override;
+
+private:
 	void OnHealthChangedHandler(float Amount);
+	void SpawnRifle();
+	
 };

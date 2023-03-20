@@ -3,12 +3,11 @@
 
 #include "Player/SPCharacter.h"
 #include "Components/SPHealthComponent.h"
-#include "Components/SPWeaponComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "SPBaseWeaponActor.h"
 
 ASPCharacter::ASPCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	WeaponComponent = CreateDefaultSubobject<USPWeaponComponent>("WeaponComponent");
 	HealthComponent = CreateDefaultSubobject<USPHealthComponent>("HealthComponent");
 
 	HealthTextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>("TextRenderComponent");
@@ -26,8 +25,40 @@ void ASPCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ASPCharacter::Shoot()
+{
+	if (WeaponInUse)
+	{
+		WeaponInUse->Shoot(this);
+	}
+}
+
+
+void ASPCharacter::OnOverlayStateChanged(EALSOverlayState PreviousState)
+{
+	Super::OnOverlayStateChanged(PreviousState);
+	switch (OverlayState)
+	{
+	case EALSOverlayState::Rifle: SpawnRifle();
+		break;
+	case EALSOverlayState::PistolOneHanded: SpawnRifle();
+		break;
+	}
+}
 
 void ASPCharacter::OnHealthChangedHandler(float Amount)
 {
 	HealthTextRenderComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Amount)));
+}
+
+void ASPCharacter::SpawnRifle()
+{
+	UWorld* World = GetWorld();
+	if (!WeaponInUse)
+	{
+		WeaponInUse = World->SpawnActor<ASPBaseWeaponActor>(WeaponClass);
+	}
+	check(WeaponInUse);
+
+	AttachToHand(nullptr, WeaponInUse->GetSkeletalMesh(), nullptr, false, FVector::Zero());
 }

@@ -3,11 +3,17 @@
 
 #include "Player/SPPlayerController.h"
 
-#include "Components/SPWeaponComponent.h"
 #include "Player/SPCharacter.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SPPlayerControllerLog, All, All)
 
+
+void ASPPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	SPCharacter = Cast<ASPCharacter>(PossessedCharacter);
+}
 
 void ASPPlayerController::FirstWeaponAction(const FInputActionValue& Value)
 {
@@ -21,10 +27,7 @@ void ASPPlayerController::SecondWeaponAction(const FInputActionValue& Value)
 
 void ASPPlayerController::FireAction(const FInputActionValue& Value)
 {
-	UActorComponent* Src = PossessedCharacter->GetComponentByClass(USPWeaponComponent::StaticClass());
-	USPWeaponComponent* UspWeaponComponent = Cast<USPWeaponComponent>(Src);
-	UspWeaponComponent->Shoot();
-	
+	SPCharacter->Shoot();
 }
 
 

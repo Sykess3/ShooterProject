@@ -7,6 +7,7 @@
 #include "InputActionValue.h"
 #include "SPPlayerController.generated.h"
 
+class ASPCharacter;
 /**
  * 
  */
@@ -15,7 +16,8 @@ UCLASS(Blueprintable, BlueprintType)
 class SHOOTERPROJECT_API ASPPlayerController : public AALSPlayerController
 {
 	GENERATED_BODY()
-
+public:
+	virtual void OnPossess(APawn* InPawn) override;
 
 protected:
 	UFUNCTION()
@@ -26,5 +28,8 @@ protected:
 
 	UFUNCTION()
 	void FireAction(const FInputActionValue& Value);
+
+	UPROPERTY()
+	ASPCharacter* SPCharacter;
 	
 };

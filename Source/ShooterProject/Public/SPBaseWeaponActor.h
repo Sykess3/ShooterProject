@@ -3,26 +3,28 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
-#include "SPWeaponComponent.generated.h"
+#include "GameFramework/Actor.h"
+#include "SPBaseWeaponActor.generated.h"
 
-struct FComponentReference;
-
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class SHOOTERPROJECT_API USPWeaponComponent : public UActorComponent
+UCLASS()
+class SHOOTERPROJECT_API ASPBaseWeaponActor : public AActor
 {
 	GENERATED_BODY()
 
-public:	
-	USPWeaponComponent();
-	void Shoot();
+public:
+	// Sets default values for this actor's properties
+	ASPBaseWeaponActor();
+	void Shoot(AActor* WeaponOwner);
+
+	UFUNCTION(BlueprintGetter)
+	USkeletalMesh* GetSkeletalMesh() const { return  WeaponMeshComponent->GetSkeletalMeshAsset();}
 
 protected:
+	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
-	FComponentReference WeaponMeshComponent;
+	USkeletalMeshComponent* WeaponMeshComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
 	FName MuzzleSocketName;
@@ -38,6 +40,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats|Damage")
 	TSubclassOf<UDamageType> DamageType;
-
-
 };

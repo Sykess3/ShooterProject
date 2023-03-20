@@ -13,5 +13,7 @@ UCLASS()
 class SHOOTERPROJECT_API AShooterProjectGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	AShooterProjectGameModeBase();
 };
