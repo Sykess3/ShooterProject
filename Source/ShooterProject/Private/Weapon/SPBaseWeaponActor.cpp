@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SPBaseWeaponActor.h"
+#include "Weapon/SPBaseWeaponActor.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -10,6 +10,8 @@ ASPBaseWeaponActor::ASPBaseWeaponActor()
 	PrimaryActorTick.bCanEverTick = false;
 	WeaponMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("WeaponMesh");
 	WeaponMeshComponent->SetupAttachment(RootComponent);
+	CollisionChannel = ECollisionChannel::ECC_Visibility;
+	MaxShootDistance = 10000.0f;
 }
 
 
@@ -18,7 +20,7 @@ void ASPBaseWeaponActor::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ASPBaseWeaponActor::Shoot(AActor* WeaponOwner)
+void ASPBaseWeaponActor::TryShoot(AActor* WeaponOwner)
 {
 	FVector ViewLocation;
 	FRotator ViewRotation;

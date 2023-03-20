@@ -14,7 +14,7 @@ class SHOOTERPROJECT_API ASPBaseWeaponActor : public AActor
 public:
 	// Sets default values for this actor's properties
 	ASPBaseWeaponActor();
-	void Shoot(AActor* WeaponOwner);
+	void TryShoot(AActor* WeaponOwner);
 
 protected:
 	// Called when the game starts or when spawned

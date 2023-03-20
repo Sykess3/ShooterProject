@@ -6,13 +6,19 @@
 #include "Character/ALSCharacter.h"
 #include "SPCharacter.generated.h"
 
-class USPWeaponComponent;
 class UTextRenderComponent;
 class USPHealthComponent;
 class ASPBaseWeaponActor;
 /**
  * 
  */
+
+UENUM(BlueprintType)
+enum class EWeaponSlot : uint8
+{
+	Main = 0,
+	Additive = 1
+};
 
 UCLASS()
 class SHOOTERPROJECT_API ASPCharacter : public AALSBaseCharacter
@@ -33,20 +39,21 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components")
 	USPHealthComponent* HealthComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon")
-	TSubclassOf<ASPBaseWeaponActor> WeaponClass;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Weapon")
 	ASPBaseWeaponActor* WeaponInUse;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	FName HoldWeaponSocket;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	TArray<TSubclassOf<ASPBaseWeaponActor>> WeaponClasses;
 
+	UFUNCTION(BlueprintNativeEvent)
+	void ChangeWeaponSlot(const EWeaponSlot WeaponSlot);
+	
 	virtual void OnOverlayStateChanged(EALSOverlayState PreviousState) override;
 
 private:
 	void OnHealthChangedHandler(float Amount);
-	void SpawnRifle();
-	
+	void AttachWeaponToHand();
 };

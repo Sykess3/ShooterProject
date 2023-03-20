@@ -4,7 +4,7 @@
 #include "Player/SPCharacter.h"
 #include "Components/SPHealthComponent.h"
 #include "Components/TextRenderComponent.h"
-#include "SPBaseWeaponActor.h"
+#include "Weapon/SPBaseWeaponActor.h"
 
 ASPCharacter::ASPCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -31,19 +31,40 @@ void ASPCharacter::Shoot()
 {
 	if (WeaponInUse)
 	{
-		WeaponInUse->Shoot(this);
+		WeaponInUse->TryShoot(this);
 	}
 }
 
 
+void ASPCharacter::AttachWeaponToHand()
+{
+	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
+	WeaponInUse->AttachToComponent(GetMesh(), AttachmentRules, HoldWeaponSocket);
+}
+
+void ASPCharacter::ChangeWeaponSlot_Implementation(const EWeaponSlot WeaponSlot)
+{
+	UWorld* World = GetWorld();
+	if (WeaponInUse)
+	{
+		WeaponInUse->Destroy();
+	}
+	const int8 SlotIndex = static_cast<int8>(WeaponSlot);
+	WeaponInUse = World->SpawnActor<ASPBaseWeaponActor>(WeaponClasses[SlotIndex]);
+	check(WeaponInUse);
+
+	AttachWeaponToHand();
+}
+
 void ASPCharacter::OnOverlayStateChanged(EALSOverlayState PreviousState)
 {
 	Super::OnOverlayStateChanged(PreviousState);
+	
 	switch (OverlayState)
 	{
-	case EALSOverlayState::Rifle: SpawnRifle();
+	case EALSOverlayState::Rifle: ChangeWeaponSlot(EWeaponSlot::Main);
 		break;
-	case EALSOverlayState::PistolOneHanded: SpawnRifle();
+	case EALSOverlayState::PistolOneHanded: ChangeWeaponSlot(EWeaponSlot::Additive);
 		break;
 	}
 }
@@ -53,15 +74,3 @@ void ASPCharacter::OnHealthChangedHandler(float Amount)
 	HealthTextRenderComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Amount)));
 }
 
-void ASPCharacter::SpawnRifle()
-{
-	UWorld* World = GetWorld();
-	if (!WeaponInUse)
-	{
-		WeaponInUse = World->SpawnActor<ASPBaseWeaponActor>(WeaponClass);
-	}
-	check(WeaponInUse);
-
-	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
-	WeaponInUse->AttachToComponent(GetMesh(), AttachmentRules, HoldWeaponSocket);
-}
