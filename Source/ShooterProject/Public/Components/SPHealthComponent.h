@@ -19,13 +19,19 @@ public:
 	USPHealthComponent();
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	float GetCurrentHealth() const { return CurrentHealth; };
+	float GetCurrentHealth() const { return CurrentHealth; }
+
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	bool IsHealthFull() const {return  CurrentHealth == MaxHealth;}
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	float GetHealthPercent() const {return CurrentHealth / MaxHealth;} 
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDead() const { return CurrentHealth <= 0; }
+
+	UFUNCTION(BlueprintCallable)
+	void Heal(float Amount);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnDeath OnDeath;

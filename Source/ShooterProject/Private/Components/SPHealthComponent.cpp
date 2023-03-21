@@ -39,6 +39,11 @@ void USPHealthComponent::OnTakeDamageHandler(AActor* DamagedActor, float Damage,
 	}
 }
 
+void USPHealthComponent::Heal(float Amount)
+{
+	SetHeath(CurrentHealth + Amount);
+}
+
 void USPHealthComponent::SetHeath(float Amount)
 {
 	CurrentHealth = FMath::Clamp(Amount, 0.0f, MaxHealth);
