@@ -13,6 +13,8 @@ class ASPBaseWeaponActor;
  * 
  */
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponChanged);
+
 UENUM(BlueprintType)
 enum class EWeaponSlot : uint8
 {
@@ -32,6 +34,12 @@ public:
 	virtual void BeginPlay() override;
 	void StartFire();
 	void StopFire();
+
+	UFUNCTION(BlueprintCallable)
+	ASPBaseWeaponActor* GetWeaponInUse() const { return WeaponInUse; };
+
+	UPROPERTY(BlueprintAssignable)
+	FOnWeaponChanged OnWeaponChanged;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")

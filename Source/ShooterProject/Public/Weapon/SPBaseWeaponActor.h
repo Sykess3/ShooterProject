@@ -6,15 +6,18 @@
 #include "GameFramework/Actor.h"
 #include "SPBaseWeaponActor.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAmmoDataChanged);
+
 USTRUCT(BlueprintType)
 struct FAmmoData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 AmountInBag = 0;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 ClipCapacity = 0;
+	UPROPERTY(BlueprintReadOnly)
 	int32 CurrentClipAmount = 0;
 };
 
@@ -25,14 +28,17 @@ class SHOOTERPROJECT_API ASPBaseWeaponActor : public AActor
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	ASPBaseWeaponActor();
 	void StartFire();
 	void StopFire();
 	void OnDeathHandler();
+	UFUNCTION(BlueprintCallable)
+	FAmmoData GetAmmoData() const { return AmmoData; };
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAmmoDataChanged OnAmmoDataChanged;
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
@@ -65,10 +71,10 @@ protected:
 	void LogAmmo();
 	bool TrySpendAmmo();
 	void GetTraceData(AActor* WeaponOwner, FVector& TraceStart,
-					  FVector& TraceEnd);
+	                  FVector& TraceEnd);
 	void ApplyDamage(AActor* WeaponOwner, FHitResult HitResult, FVector HitFromDirection);
 	FVector GetMuzzleLocation();
-	
+
 	FHitResult MakeHit(AActor* WeaponOwner, const FVector TraceStart, const FVector TraceEnd);
 private:
 	FTimerHandle FireRateTimer;

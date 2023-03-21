@@ -19,6 +19,7 @@ void ASPBaseWeaponActor::BeginPlay()
 {
 	Super::BeginPlay();
 	DelayBetweenShots = 1 / FireRateInSecond;
+	ReloadClip();
 }
 
 void ASPBaseWeaponActor::StartFire()
@@ -120,6 +121,8 @@ void ASPBaseWeaponActor::ReloadClip()
 		AmmoData.AmountInBag -= AmmoData.ClipCapacity;
 	}
 
+	OnAmmoDataChanged.Broadcast();
+
 	UE_LOG(LogTemp, Warning, TEXT("---------Change Clip--------"));
 }
 
@@ -139,6 +142,12 @@ bool ASPBaseWeaponActor::TrySpendAmmo()
 	}
 	
 	--AmmoData.CurrentClipAmount;
+	OnAmmoDataChanged.Broadcast();
+	
+	if (IsCurrentClipEmpty())
+	{
+		ReloadClip();
+	}
 	LogAmmo();
 	return true;
 

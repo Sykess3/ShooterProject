@@ -71,6 +71,8 @@ void ASPCharacter::ChangeWeaponSlot_Implementation(const EWeaponSlot WeaponSlot)
 	check(WeaponInUse);
 
 	AttachToHand(WeaponInUse);
+	
+	OnWeaponChanged.Broadcast();
 }
 
 void ASPCharacter::OnOverlayStateChanged(EALSOverlayState PreviousState)
