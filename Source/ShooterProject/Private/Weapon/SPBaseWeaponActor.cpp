@@ -24,7 +24,7 @@ void ASPBaseWeaponActor::BeginPlay()
 void ASPBaseWeaponActor::StartFire()
 {
 	GetWorld()->GetTimerManager().SetTimer(FireRateTimer, this, &ASPBaseWeaponActor::Shoot, DelayBetweenShots,
-	                                       true);
+	                                       true, 0);
 }
 
 void ASPBaseWeaponActor::StopFire()
@@ -34,7 +34,14 @@ void ASPBaseWeaponActor::StopFire()
 
 void ASPBaseWeaponActor::Shoot()
 {
-	SpendAmmo();
+	if (IsNoAmmo())
+		return;
+
+	bool bIsReload = !TrySpendAmmo();
+	
+	if (bIsReload)
+		return;
+
 	FVector TraceStart, TraceEnd;
 	GetTraceData(GetOwner(), TraceStart, TraceEnd);
 
@@ -52,7 +59,6 @@ void ASPBaseWeaponActor::Shoot()
 	{
 		DrawDebugLine(GetWorld(), GetMuzzleLocation(), TraceEnd, FColor::Red, false, 3.0f);
 	}
-	
 }
 
 void ASPBaseWeaponActor::GetTraceData(AActor* WeaponOwner, FVector& TraceStart, FVector& TraceEnd)
@@ -86,9 +92,9 @@ void ASPBaseWeaponActor::OnDeathHandler()
 }
 
 
-bool ASPBaseWeaponActor::IsAmmoBagEmpty() const
+bool ASPBaseWeaponActor::IsNoAmmo() const
 {
-	return AmmoData.AmountInBag == 0;
+	return AmmoData.AmountInBag == 0 && AmmoData.CurrentClipAmount == 0;
 }
 
 FVector ASPBaseWeaponActor::GetMuzzleLocation()
@@ -101,7 +107,7 @@ bool ASPBaseWeaponActor::IsCurrentClipEmpty() const
 	return AmmoData.CurrentClipAmount == 0;
 }
 
-void ASPBaseWeaponActor::ChangeClip()
+void ASPBaseWeaponActor::ReloadClip()
 {
 	if (AmmoData.ClipCapacity > AmmoData.AmountInBag)
 	{
@@ -113,20 +119,29 @@ void ASPBaseWeaponActor::ChangeClip()
 		AmmoData.CurrentClipAmount = AmmoData.ClipCapacity;
 		AmmoData.AmountInBag -= AmmoData.ClipCapacity;
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("---------Change Clip--------"));
 }
 
 void ASPBaseWeaponActor::LogAmmo()
 {
+	FString AmmoInfo = "Ammo" + FString::FromInt(AmmoData.AmountInBag) + " / ";
+	AmmoInfo += FString::FromInt(AmmoData.CurrentClipAmount);
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *AmmoInfo);
 }
 
-void ASPBaseWeaponActor::SpendAmmo()
+bool ASPBaseWeaponActor::TrySpendAmmo()
 {
-	if (IsCurrentClipEmpty() && !IsAmmoBagEmpty())
+	if (IsCurrentClipEmpty())
 	{
-		ChangeClip();
+		ReloadClip();
+		return false;
 	}
-
+	
 	--AmmoData.CurrentClipAmount;
+	LogAmmo();
+	return true;
+
 }
 
 FHitResult ASPBaseWeaponActor::MakeHit(AActor* WeaponOwner, const FVector TraceStart, const FVector TraceEnd)

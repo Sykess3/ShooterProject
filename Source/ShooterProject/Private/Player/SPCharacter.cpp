@@ -22,8 +22,8 @@ ASPCharacter::ASPCharacter(const FObjectInitializer& ObjectInitializer) : Super(
 void ASPCharacter::PreInitializeComponents()
 {
 	Super::PreInitializeComponents();
-	HealthComponent->OnHealthChanged.AddUObject(this, &ASPCharacter::OnHealthChangedHandler);
-	HealthComponent->OnDeath.AddUObject(this, &ASPCharacter::OnDeathHandler);
+	HealthComponent->OnHealthChanged.AddDynamic(this, &ASPCharacter::OnHealthChangedHandler);
+	HealthComponent->OnDeath.AddDynamic(this, &ASPCharacter::OnDeathHandler);
 }
 
 
@@ -49,10 +49,10 @@ void ASPCharacter::StopFire()
 }
 
 
-void ASPCharacter::AttachWeaponToHand() const
+void ASPCharacter::AttachToHand(AActor* ActorToWhichAttach) const
 {
 	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
-	WeaponInUse->AttachToComponent(GetMesh(), AttachmentRules, HoldWeaponSocket);
+	ActorToWhichAttach->AttachToComponent(GetMesh(), AttachmentRules, HoldWeaponSocket);
 }
 
 void ASPCharacter::ChangeWeaponSlot_Implementation(const EWeaponSlot WeaponSlot)
@@ -60,6 +60,7 @@ void ASPCharacter::ChangeWeaponSlot_Implementation(const EWeaponSlot WeaponSlot)
 	UWorld* World = GetWorld();
 	if (WeaponInUse)
 	{
+		//HealthComponent->OnDeath.Remove(WeaponInUse, &ASPBaseWeaponActor::OnDeathHandler);
 		WeaponInUse->Destroy();
 	}
 	const int8 SlotIndex = static_cast<int8>(WeaponSlot);
@@ -69,7 +70,7 @@ void ASPCharacter::ChangeWeaponSlot_Implementation(const EWeaponSlot WeaponSlot)
 	WeaponInUse = World->SpawnActor<ASPBaseWeaponActor>(WeaponClasses[SlotIndex], SpawnParameters);
 	check(WeaponInUse);
 
-	AttachWeaponToHand();
+	AttachToHand(WeaponInUse);
 }
 
 void ASPCharacter::OnOverlayStateChanged(EALSOverlayState PreviousState)

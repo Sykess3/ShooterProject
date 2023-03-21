@@ -2,7 +2,6 @@
 
 
 #include "Components/SPHealthComponent.h"
-#include "Components/TextRenderComponent.h"
 
 
 USPHealthComponent::USPHealthComponent()
@@ -14,6 +13,7 @@ USPHealthComponent::USPHealthComponent()
 void USPHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	check(MaxHealth > 0)
 
 	SetHeath(MaxHealth);
 

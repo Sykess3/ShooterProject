@@ -42,7 +42,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Weapon")
 	ASPBaseWeaponActor* WeaponInUse;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	FName HoldWeaponSocket;
 
@@ -51,11 +51,13 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void ChangeWeaponSlot(const EWeaponSlot WeaponSlot);
-	
+
 	virtual void OnOverlayStateChanged(EALSOverlayState PreviousState) override;
 
 private:
+	UFUNCTION()
 	void OnHealthChangedHandler(float Amount);
+	UFUNCTION()
 	void OnDeathHandler();
-	void AttachWeaponToHand() const;
+	void AttachToHand(AActor* ActorToWhichAttach) const;
 };

@@ -6,9 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "SPHealthComponent.generated.h"
 
-
-DECLARE_MULTICAST_DELEGATE(FOnDeath)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float, NewHealthAbsoluteAmount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHOOTERPROJECT_API USPHealthComponent : public UActorComponent
@@ -19,13 +18,18 @@ public:
 	// Sets default values for this component's properties
 	USPHealthComponent();
 
-	UFUNCTION(BlueprintCallable, Category = "Helath")
+	UFUNCTION(BlueprintCallable, Category = "Health")
 	float GetCurrentHealth() const { return CurrentHealth; };
+
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	float GetHealthPercent() const {return CurrentHealth / MaxHealth;} 
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDead() const { return CurrentHealth <= 0; }
 
+	UPROPERTY(BlueprintAssignable)
 	FOnDeath OnDeath;
+	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
 
 protected:

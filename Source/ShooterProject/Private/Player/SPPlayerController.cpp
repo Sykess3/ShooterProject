@@ -5,6 +5,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "InputMappingContext.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/SPCharacter.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SPPlayerControllerLog, All, All)
@@ -24,6 +25,7 @@ void ASPPlayerController::SetupInputComponent()
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
 	EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &ASPPlayerController::OnStartFire);
 	EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ASPPlayerController::OnStopFire);
+	EnhancedInputComponent->BindAction(DebugTakeDamage, ETriggerEvent::Started, this, &ASPPlayerController::OnDebugTakeDamage);
 }
 
 void ASPPlayerController::FirstWeaponAction(const FInputActionValue& Value)
@@ -44,6 +46,11 @@ void ASPPlayerController::OnStartFire()
 void ASPPlayerController::OnStopFire()
 {
 	SPCharacter->StopFire();
+}
+
+void ASPPlayerController::OnDebugTakeDamage()
+{
+	UGameplayStatics::ApplyRadialDamage(GetWorld(), 10, GetPawn()->GetActorLocation(), 10, {}, {}, this, nullptr, true);
 } 
 
 

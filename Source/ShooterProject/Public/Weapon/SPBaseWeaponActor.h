@@ -12,10 +12,10 @@ struct FAmmoData
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	int32 AmountInBag;
+	int32 AmountInBag = 0;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	int32 ClipCapacity;
-	int32 CurrentClipAmount;
+	int32 ClipCapacity = 0;
+	int32 CurrentClipAmount = 0;
 };
 
 
@@ -59,11 +59,11 @@ protected:
 	FAmmoData AmmoData;
 
 	void Shoot();
-	bool IsAmmoBagEmpty() const;
+	bool IsNoAmmo() const;
 	bool IsCurrentClipEmpty() const;
-	void ChangeClip();
+	void ReloadClip();
 	void LogAmmo();
-	void SpendAmmo();
+	bool TrySpendAmmo();
 	void GetTraceData(AActor* WeaponOwner, FVector& TraceStart,
 					  FVector& TraceEnd);
 	void ApplyDamage(AActor* WeaponOwner, FHitResult HitResult, FVector HitFromDirection);

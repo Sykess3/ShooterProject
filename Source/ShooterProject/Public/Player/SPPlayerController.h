@@ -25,6 +25,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category ="Input")
 	UInputAction* FireAction;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category ="Input")
+	UInputAction* DebugTakeDamage;
+
+	UPROPERTY()
+	ASPCharacter* SPCharacter;
+
 	UFUNCTION()
 	void FirstWeaponAction(const FInputActionValue& Value);
 
@@ -37,6 +43,5 @@ protected:
 	UFUNCTION()
 	void OnStopFire();
 
-	UPROPERTY()
-	ASPCharacter* SPCharacter;
+	void OnDebugTakeDamage();
 };
