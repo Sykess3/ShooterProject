@@ -5,9 +5,11 @@
 
 #include "Components/SPHealthComponent.h"
 
-ASPHealthPickUpBaseActor::ASPHealthPickUpBaseActor()
+ASPHealthPickUpBaseActor::ASPHealthPickUpBaseActor() 
 {
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Model");
+	StaticMeshComponent->SetupAttachment(RootComponent);
+	StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 }
 
 bool ASPHealthPickUpBaseActor::TryGivePickUpTo(AActor* OtherActor)

@@ -39,7 +39,7 @@ void ASPBaseWeaponActor::Shoot()
 		return;
 
 	bool bIsReload = !TrySpendAmmo();
-	
+
 	if (bIsReload)
 		return;
 
@@ -92,11 +92,20 @@ void ASPBaseWeaponActor::OnDeathHandler()
 	StopFire();
 }
 
+void ASPBaseWeaponActor::AccrueAmmo(float AmmoAmount)
+{
+	AmmoData.AmountInBag = FMath::Min(AmmoData.AmountInBag + AmmoAmount,
+	                                  AmmoData.MaxOverallAmount - AmmoData.CurrentClipAmount);
+
+	OnAmmoDataChanged.Broadcast();
+}
+
 
 bool ASPBaseWeaponActor::IsNoAmmo() const
 {
 	return AmmoData.AmountInBag == 0 && AmmoData.CurrentClipAmount == 0;
 }
+
 
 FVector ASPBaseWeaponActor::GetMuzzleLocation()
 {
@@ -106,6 +115,16 @@ FVector ASPBaseWeaponActor::GetMuzzleLocation()
 bool ASPBaseWeaponActor::IsCurrentClipEmpty() const
 {
 	return AmmoData.CurrentClipAmount == 0;
+}
+
+bool ASPBaseWeaponActor::AreClipsFull() const
+{
+	return (AmmoData.MaxOverallAmount == AmmoData.CurrentClipAmount + AmmoData.AmountInBag) && IsCurrentClipFull();
+}
+
+bool ASPBaseWeaponActor::IsCurrentClipFull() const
+{
+	return AmmoData.CurrentClipAmount == AmmoData.ClipCapacity;
 }
 
 void ASPBaseWeaponActor::ReloadClip()
@@ -140,17 +159,16 @@ bool ASPBaseWeaponActor::TrySpendAmmo()
 		ReloadClip();
 		return false;
 	}
-	
+
 	--AmmoData.CurrentClipAmount;
 	OnAmmoDataChanged.Broadcast();
-	
+
 	if (IsCurrentClipEmpty())
 	{
 		ReloadClip();
 	}
 	LogAmmo();
 	return true;
-
 }
 
 FHitResult ASPBaseWeaponActor::MakeHit(AActor* WeaponOwner, const FVector TraceStart, const FVector TraceEnd)

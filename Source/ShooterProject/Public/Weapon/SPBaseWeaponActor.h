@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "PickUps/SPPickUpAmmoBaseActor.h"
 #include "SPBaseWeaponActor.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAmmoDataChanged);
@@ -17,8 +18,11 @@ struct FAmmoData
 	int32 AmountInBag = 0;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 ClipCapacity = 0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 MaxOverallAmount;
 	UPROPERTY(BlueprintReadOnly)
 	int32 CurrentClipAmount = 0;
+	
 };
 
 
@@ -32,8 +36,15 @@ public:
 	void StartFire();
 	void StopFire();
 	void OnDeathHandler();
+	void AccrueAmmo(float AmmoAmount);
+
+	bool IsNoAmmo() const;
+	bool IsCurrentClipEmpty() const;
+	bool AreClipsFull() const;
+	bool IsCurrentClipFull() const;
+
 	UFUNCTION(BlueprintCallable)
-	FAmmoData GetAmmoData() const { return AmmoData; };
+	FAmmoData GetAmmoData() const { return AmmoData; }
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAmmoDataChanged OnAmmoDataChanged;
@@ -65,8 +76,6 @@ protected:
 	FAmmoData AmmoData;
 
 	void Shoot();
-	bool IsNoAmmo() const;
-	bool IsCurrentClipEmpty() const;
 	void ReloadClip();
 	void LogAmmo();
 	bool TrySpendAmmo();
