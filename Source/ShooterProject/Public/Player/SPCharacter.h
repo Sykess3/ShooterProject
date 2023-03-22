@@ -42,9 +42,6 @@ public:
 	FOnWeaponChanged OnWeaponChanged;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
-	UTextRenderComponent* HealthTextRenderComponent;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components")
 	USPHealthComponent* HealthComponent;
 
@@ -63,8 +60,6 @@ protected:
 	virtual void OnOverlayStateChanged(EALSOverlayState PreviousState) override;
 
 private:
-	UFUNCTION()
-	void OnHealthChangedHandler(float Amount);
 	UFUNCTION()
 	void OnDeathHandler();
 	void AttachToHand(AActor* ActorToWhichAttach) const;

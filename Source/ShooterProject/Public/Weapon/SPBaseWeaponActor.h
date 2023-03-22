@@ -51,6 +51,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
 	USkeletalMeshComponent* WeaponMeshComponent;
@@ -74,6 +75,8 @@ protected:
 	TSubclassOf<UDamageType> DamageType;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats")
 	FAmmoData AmmoData;
+	UPROPERTY(VisibleAnywhere)
+	float DelayBetweenShots;
 
 	void Shoot();
 	void ReloadClip();
@@ -87,5 +90,4 @@ protected:
 	FHitResult MakeHit(AActor* WeaponOwner, const FVector TraceStart, const FVector TraceEnd);
 private:
 	FTimerHandle FireRateTimer;
-	float DelayBetweenShots;
 };

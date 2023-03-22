@@ -9,12 +9,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon/SPBaseWeaponActor.h"
 
+
 ASPCharacter::ASPCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	HealthComponent = CreateDefaultSubobject<USPHealthComponent>("HealthComponent");
-
-	HealthTextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>("TextRenderComponent");
-	HealthTextRenderComponent->SetupAttachment(GetRootComponent());
 
 	HoldWeaponSocket = TEXT("VB RHS_ik_hand_gun");
 }
@@ -22,7 +20,6 @@ ASPCharacter::ASPCharacter(const FObjectInitializer& ObjectInitializer) : Super(
 void ASPCharacter::PreInitializeComponents()
 {
 	Super::PreInitializeComponents();
-	HealthComponent->OnHealthChanged.AddDynamic(this, &ASPCharacter::OnHealthChangedHandler);
 	HealthComponent->OnDeath.AddDynamic(this, &ASPCharacter::OnDeathHandler);
 }
 
@@ -88,10 +85,6 @@ void ASPCharacter::OnOverlayStateChanged(EALSOverlayState PreviousState)
 	}
 }
 
-void ASPCharacter::OnHealthChangedHandler(float Amount)
-{
-	HealthTextRenderComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Amount)));
-}
 
 void ASPCharacter::OnDeathHandler()
 {

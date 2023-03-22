@@ -18,8 +18,13 @@ ASPBaseWeaponActor::ASPBaseWeaponActor()
 void ASPBaseWeaponActor::BeginPlay()
 {
 	Super::BeginPlay();
-	DelayBetweenShots = 1 / FireRateInSecond;
 	ReloadClip();
+}
+
+void ASPBaseWeaponActor::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	DelayBetweenShots = 1 / FireRateInSecond;
 }
 
 void ASPBaseWeaponActor::StartFire()
