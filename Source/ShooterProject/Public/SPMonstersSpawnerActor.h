@@ -45,5 +45,7 @@ private:
 	
 	void SpawnMonsterInRandomLocation(const TSubclassOf<ASPAIController>& AIController, const TSubclassOf<ASPAICharacter>& AICharacter);
 	void SpawnMonsterInRandomLocation();
+	UFUNCTION()
+	void AccrueKillAward(AActor* Killer, AActor* Victim);
 	FMonsterSpawnData GetRandomMonsterSpawnData();
 };

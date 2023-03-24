@@ -18,8 +18,11 @@ public:
 	ASPAICharacter(const FObjectInitializer& ObjectInitializer);
 
 	UBehaviorTree* GetBehaviourTree() const;
-	
+	int32 GetAward() const;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
 	UBehaviorTree* BehaviorTree;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Awards")
+	int32 Award;
 };

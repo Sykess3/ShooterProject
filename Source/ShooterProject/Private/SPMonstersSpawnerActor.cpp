@@ -7,6 +7,8 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Components/SPHealthComponent.h"
+#include "Player/SPPlayerState.h"
 
 ASPMonstersSpawnerActor::ASPMonstersSpawnerActor()
 {
@@ -56,14 +58,30 @@ void ASPMonstersSpawnerActor::SpawnMonsterInRandomLocation(const TSubclassOf<ASP
 
 	const FBoxSphereBounds Bounds = BoxComponent->Bounds;
 	const FVector Location = UKismetMathLibrary::RandomPointInBoundingBox(Bounds.Origin, Bounds.BoxExtent);
-	
+
 
 	ASPAIController* Controller = GetWorld()->SpawnActor<ASPAIController>(AIController);
 	ASPAICharacter* Character = GetWorld()->SpawnActor<ASPAICharacter>(AICharacter, Location, FRotator::ZeroRotator,
 	                                                                   SpawnParameters);
+
+	Character->GetHealthComponent()->OnDeath.AddDynamic(this, &ASPMonstersSpawnerActor::AccrueKillAward);
 	Controller->SetPawn(Character);
 	Controller->Possess(Character);
 
 	FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, false);
 	Controller->AttachToComponent(Character->GetRootComponent(), AttachRules);
+}
+
+void ASPMonstersSpawnerActor::AccrueKillAward(AActor* Killer, AActor* Victim)
+{
+	if (auto Player = Cast<ASPCharacter>(Killer))
+	{
+		auto KilledCreature = Cast<ASPAICharacter>(Victim);
+		
+		ASPPlayerState* PlayerState = Player->GetPlayerState<ASPPlayerState>();
+		if (PlayerState && KilledCreature)
+		{
+			PlayerState->TakeAward(KilledCreature->GetAward());
+		}
+	}
 }

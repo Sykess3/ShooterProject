@@ -44,6 +44,8 @@ public:
 	void StartFire();
 	void StopFire();
 
+	USPHealthComponent* GetHealthComponent() const;
+
 	virtual FGenericTeamId GetGenericTeamId() const override;
 
 	UFUNCTION(BlueprintCallable)
@@ -76,6 +78,6 @@ protected:
 
 private:
 	UFUNCTION()
-	void OnDeathHandler();
+	void OnDeathHandler(AActor* Killer, AActor* Victim);
 	void AttachToHand(AActor* ActorToWhichAttach) const;
 };

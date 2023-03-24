@@ -4,6 +4,7 @@
 #include "AI/SPAICharacter.h"
 
 #include "AI/SPAIController.h"
+#include "Components/SPHealthComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 ASPAICharacter::ASPAICharacter(const FObjectInitializer& ObjectInitializer) :Super(ObjectInitializer)
@@ -22,5 +23,10 @@ ASPAICharacter::ASPAICharacter(const FObjectInitializer& ObjectInitializer) :Sup
 UBehaviorTree* ASPAICharacter::GetBehaviourTree() const
 {
 	return BehaviorTree;
+}
+
+int32 ASPAICharacter::GetAward() const
+{
+	return Award;
 }
 

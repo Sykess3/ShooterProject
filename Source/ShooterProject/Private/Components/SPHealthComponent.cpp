@@ -40,7 +40,7 @@ void USPHealthComponent::OnTakeDamageHandler(AActor* DamagedActor, float Damage,
 
 	if (IsDead())
 	{
-		OnDeath.Broadcast();
+		OnDeath.Broadcast(DamageCauser, GetOwner());
 	}
 }
 

@@ -45,6 +45,11 @@ void ASPCharacter::StopFire()
 	}
 }
 
+USPHealthComponent* ASPCharacter::GetHealthComponent() const
+{
+	return HealthComponent;
+}
+
 FGenericTeamId ASPCharacter::GetGenericTeamId() const
 {
 	return FGenericTeamId(static_cast<uint8>(TeamId));	
@@ -91,7 +96,7 @@ void ASPCharacter::OnOverlayStateChanged(EALSOverlayState PreviousState)
 }
 
 
-void ASPCharacter::OnDeathHandler()
+void ASPCharacter::OnDeathHandler(AActor* Killer, AActor* Victim)
 {
 	RagdollAction();
 	GetCharacterMovement()->DisableMovement();
