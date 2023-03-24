@@ -20,9 +20,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	USphereComponent* CollisionComponent;
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Respawn")
+	float RespawnTime = 5;
 	
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 	virtual bool TryGivePickUpTo(AActor* OtherActor);
 	virtual void PickUpHasTaken();
 private:
+	void Respawn();
 };

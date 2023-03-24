@@ -10,3 +10,4 @@ AShooterProjectGameModeBase::AShooterProjectGameModeBase()
 	DefaultPawnClass = ASPCharacter::StaticClass();
 	PlayerControllerClass = ASPPlayerController::StaticClass();
 }
+

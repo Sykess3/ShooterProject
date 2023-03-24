@@ -73,7 +73,9 @@ void ASPBaseWeaponActor::GetTraceData(AActor* WeaponOwner, FVector& TraceStart, 
 	FRotator ViewRotation;
 
 	AController* Controller = WeaponOwner->GetInstigatorController();
-	check(Controller);
+	if (!Controller)
+		return;
+	
 	Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
 
 	TraceStart = ViewLocation;

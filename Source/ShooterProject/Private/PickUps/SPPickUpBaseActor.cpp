@@ -3,6 +3,7 @@
 
 #include "PickUps/SPPickUpBaseActor.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ASPPickUpBaseActor::ASPPickUpBaseActor()
 {
@@ -36,7 +37,22 @@ bool ASPPickUpBaseActor::TryGivePickUpTo(AActor* OtherActor)
 
 void ASPPickUpBaseActor::PickUpHasTaken()
 {
-	Destroy();
+	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	if (GetRootComponent())
+	{
+		GetRootComponent()->SetVisibility(false, true);
+	}
+	FTimerHandle RespawnTimer;
+	GetWorldTimerManager().SetTimer(RespawnTimer, this, &ASPPickUpBaseActor::Respawn, RespawnTime);
+}
+
+void ASPPickUpBaseActor::Respawn()
+{
+	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	if (GetRootComponent())
+	{
+		GetRootComponent()->SetVisibility(true, true);
+	}
 }
 
 

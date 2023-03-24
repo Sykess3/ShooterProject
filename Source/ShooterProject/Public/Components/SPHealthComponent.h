@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Player/SPCharacter.h"
 #include "SPHealthComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float, NewHealthAbsoluteAmount);
@@ -17,7 +18,7 @@ class SHOOTERPROJECT_API USPHealthComponent : public UActorComponent
 public:
 	// Sets default values for this component's properties
 	USPHealthComponent();
-
+	
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	float GetCurrentHealth() const { return CurrentHealth; }
 
@@ -37,14 +38,19 @@ public:
 	FOnDeath OnDeath;
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
+	UPROPERTY()
+	ASPCharacter* SPCharacter;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Health", meta =(ClampMin = 0.0f, ClampMax = 1000.0f))
-	float MaxHealth;
-	
 	virtual void BeginPlay() override;
 
 	void SetHeath(float Amount);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Health", meta =(ClampMin = 0.0f, ClampMax = 1000.0f))
+	float MaxHealth;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Team")
+	ETeamId TeamId;
+
 
 private:
 	float CurrentHealth;
@@ -52,4 +58,5 @@ private:
 	UFUNCTION()
 	void OnTakeDamageHandler(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy,
 		AActor* DamageCauser);
+	
 };

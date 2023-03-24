@@ -45,6 +45,11 @@ void ASPCharacter::StopFire()
 	}
 }
 
+FGenericTeamId ASPCharacter::GetGenericTeamId() const
+{
+	return FGenericTeamId(static_cast<uint8>(TeamId));	
+}
+
 
 void ASPCharacter::AttachToHand(AActor* ActorToWhichAttach) const
 {

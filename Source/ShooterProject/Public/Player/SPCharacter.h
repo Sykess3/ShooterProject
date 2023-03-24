@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GenericTeamAgentInterface.h"
 #include "Character/ALSCharacter.h"
 #include "SPCharacter.generated.h"
 
@@ -22,8 +23,16 @@ enum class EWeaponSlot : uint8
 	Additive = 1
 };
 
+UENUM(BlueprintType)
+enum class ETeamId : uint8
+{
+	Player = 0,
+	Monster = 1
+};
+
+
 UCLASS()
-class SHOOTERPROJECT_API ASPCharacter : public AALSBaseCharacter
+class SHOOTERPROJECT_API ASPCharacter : public AALSBaseCharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -35,11 +44,14 @@ public:
 	void StartFire();
 	void StopFire();
 
+	virtual FGenericTeamId GetGenericTeamId() const override;
+
 	UFUNCTION(BlueprintCallable)
 	ASPBaseWeaponActor* GetWeaponInUse() const { return WeaponInUse; };
 
 	UPROPERTY(BlueprintAssignable)
 	FOnWeaponChanged OnWeaponChanged;
+
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components")
@@ -53,6 +65,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	TArray<TSubclassOf<ASPBaseWeaponActor>> WeaponClasses;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Team")
+	ETeamId TeamId;
 
 	UFUNCTION(BlueprintNativeEvent)
 	void ChangeWeaponSlot(const EWeaponSlot WeaponSlot);

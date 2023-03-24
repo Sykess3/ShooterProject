@@ -23,3 +23,4 @@ UBehaviorTree* ASPAICharacter::GetBehaviourTree() const
 {
 	return BehaviorTree;
 }
+

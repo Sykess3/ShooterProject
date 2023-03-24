@@ -3,6 +3,9 @@
 
 #include "Components/SPHealthComponent.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Player/SPCharacter.h"
+
 
 USPHealthComponent::USPHealthComponent()
 {
@@ -17,8 +20,7 @@ void USPHealthComponent::BeginPlay()
 
 	SetHeath(MaxHealth);
 
-	AActor* Owner = GetOwner();
-	Owner->OnTakeAnyDamage.AddDynamic(this, &USPHealthComponent::OnTakeDamageHandler);
+	GetOwner()->OnTakeAnyDamage.AddDynamic(this, &USPHealthComponent::OnTakeDamageHandler);
 }
 
 
@@ -26,10 +28,13 @@ void USPHealthComponent::OnTakeDamageHandler(AActor* DamagedActor, float Damage,
                                              AController* InstigatedBy,
                                              AActor* DamageCauser)
 {
-	if (Damage <= 0 || IsDead())
-	{
+	AActor* B = GetOwner();
+	ETeamAttitude::Type Attitude = FGenericTeamId::GetAttitude(DamageCauser, B);
+	if (Attitude != ETeamAttitude::Type::Hostile)
 		return;
-	}
+
+	if (Damage <= 0 || IsDead())
+		return;
 
 	SetHeath(CurrentHealth - Damage);
 
