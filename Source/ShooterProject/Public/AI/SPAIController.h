@@ -38,4 +38,7 @@ protected:
 	void OnTargetPerceptionInfoUpdatedHandler(const FActorPerceptionUpdateInfo& UpdateInfo);
 	UFUNCTION()
 	void OnPerceptionUpdatedHandler(const TArray<AActor*>& Actors);
+private:
+	UFUNCTION()
+	void InitializeCharacter();
 };

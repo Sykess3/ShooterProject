@@ -27,6 +27,11 @@ void ASPBaseWeaponActor::OnConstruction(const FTransform& Transform)
 	DelayBetweenShots = 1 / FireRateInSecond;
 }
 
+void ASPBaseWeaponActor::SetAmmo(const FAmmoData& NewAmmoData)
+{
+	AmmoData = NewAmmoData;
+}
+
 void ASPBaseWeaponActor::StartFire()
 {
 	GetWorld()->GetTimerManager().SetTimer(FireRateTimer, this, &ASPBaseWeaponActor::Shoot, DelayBetweenShots,

@@ -54,8 +54,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnWeaponChanged OnWeaponChanged;
 
-
 protected:
+	TMap<EWeaponSlot, ASPBaseWeaponActor*> WeaponsCache;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Components")
 	USPHealthComponent* HealthComponent;
 

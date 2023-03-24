@@ -19,7 +19,6 @@ public:
 
 	UBehaviorTree* GetBehaviourTree() const;
 	int32 GetAward() const;
-
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
 	UBehaviorTree* BehaviorTree;

@@ -64,17 +64,24 @@ void ASPCharacter::AttachToHand(AActor* ActorToWhichAttach) const
 
 void ASPCharacter::ChangeWeaponSlot_Implementation(const EWeaponSlot WeaponSlot)
 {
+	StopFire();
 	UWorld* World = GetWorld();
 	if (WeaponInUse)
 	{
-		//HealthComponent->OnDeath.Remove(WeaponInUse, &ASPBaseWeaponActor::OnDeathHandler);
-		WeaponInUse->Destroy();
+		WeaponInUse->GetRootComponent()->SetVisibility(false, true);
 	}
+	
 	const int8 SlotIndex = static_cast<int8>(WeaponSlot);
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.Owner = this;
-	SpawnParameters.Instigator = GetInstigator();
-	WeaponInUse = World->SpawnActor<ASPBaseWeaponActor>(WeaponClasses[SlotIndex], SpawnParameters);
+	if (!WeaponsCache.Contains(WeaponSlot))
+	{
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.Owner = this;
+		SpawnParameters.Instigator = GetInstigator();
+		const auto NewWeaponActor = World->SpawnActor<ASPBaseWeaponActor>(WeaponClasses[SlotIndex], SpawnParameters);
+		WeaponsCache.Add(WeaponSlot, NewWeaponActor);
+	}
+	WeaponInUse = WeaponsCache[WeaponSlot];
+	WeaponInUse->GetRootComponent()->SetVisibility(true, true);
 	check(WeaponInUse);
 
 	AttachToHand(WeaponInUse);

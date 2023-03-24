@@ -53,6 +53,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	void SetAmmo(const FAmmoData& NewAmmoData);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
 	USkeletalMeshComponent* WeaponMeshComponent;
 

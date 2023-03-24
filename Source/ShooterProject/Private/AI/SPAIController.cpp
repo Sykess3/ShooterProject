@@ -19,31 +19,25 @@ void ASPAIController::BeginPlay()
 	Super::BeginPlay();
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ASPAIController::OnTargetPerceptionUpdateHandler);
 	PerceptionComponent->OnTargetPerceptionInfoUpdated.AddDynamic(this, &ASPAIController::OnTargetPerceptionInfoUpdatedHandler);
-	
 }
 
 void ASPAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	AICharacter = Cast<ASPAICharacter>(InPawn);
-	if (AICharacter)
-	{
-		RunBehaviorTree(AICharacter->GetBehaviourTree());
-	}
+	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ASPAIController::InitializeCharacter);
 }
 
 ETeamAttitude::Type ASPAIController::GetTeamAttitudeTowards(const AActor& Other) const
 {
-	auto Char = Cast<ASPAICharacter>(GetPawn());
-	if (!Char)
+	if (!AICharacter)
 	{
-		
+		UE_LOG(LogTemp, Error, TEXT("%s"), *GetName());
 		return ETeamAttitude::Neutral;
 	}
 	
 	if (auto OtherAgent= Cast<IGenericTeamAgentInterface>(&Other))
 	{
-		ETeamId ThisCharacterTeam = static_cast<ETeamId>(Char->GetGenericTeamId().GetId());
+		ETeamId ThisCharacterTeam = static_cast<ETeamId>(AICharacter->GetGenericTeamId().GetId());
 		ETeamId OtherGenericTeamId = static_cast<ETeamId>(OtherAgent->GetGenericTeamId().GetId());
 		
 		return ThisCharacterTeam == OtherGenericTeamId
@@ -81,4 +75,13 @@ void ASPAIController::OnPerceptionUpdatedHandler(const TArray<AActor*>& Actors)
 {
 	UE_LOG(LogTemp, Error, TEXT("OnPerceptionUpdatedHandler"));
 
+}
+
+void ASPAIController::InitializeCharacter()
+{
+	AICharacter = Cast<ASPAICharacter>(GetPawn());
+	if (AICharacter)
+	{
+		RunBehaviorTree(AICharacter->GetBehaviourTree());
+	}
 }

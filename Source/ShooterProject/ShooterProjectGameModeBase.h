@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GenericTeamAgentInterface.h"
 #include "GameFramework/GameModeBase.h"
 #include "ShooterProjectGameModeBase.generated.h"
 
@@ -16,5 +15,5 @@ class SHOOTERPROJECT_API AShooterProjectGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-	AShooterProjectGameModeBase();
+	AShooterProjectGameModeBase();;
 };

@@ -13,3 +13,6 @@ AShooterProjectGameModeBase::AShooterProjectGameModeBase()
 	PlayerStateClass = ASPPlayerState::StaticClass();
 }
 
+
+
+

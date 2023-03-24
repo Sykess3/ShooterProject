@@ -24,7 +24,7 @@ void ASPMonstersSpawnerActor::BeginPlay()
 		SpawnMonsterInRandomLocation();
 	}
 	GetWorldTimerManager().SetTimer(RespawnTimer, this, &ASPMonstersSpawnerActor::SpawnMonsterInRandomLocation,
-	                                DelayBetweenSpawns, true, DelayBetweenSpawns);
+	                                DelayBetweenSpawns, true, 2);
 }
 
 FMonsterSpawnData ASPMonstersSpawnerActor::GetRandomMonsterSpawnData()
@@ -60,16 +60,11 @@ void ASPMonstersSpawnerActor::SpawnMonsterInRandomLocation(const TSubclassOf<ASP
 	const FVector Location = UKismetMathLibrary::RandomPointInBoundingBox(Bounds.Origin, Bounds.BoxExtent);
 
 
-	ASPAIController* Controller = GetWorld()->SpawnActor<ASPAIController>(AIController);
 	ASPAICharacter* Character = GetWorld()->SpawnActor<ASPAICharacter>(AICharacter, Location, FRotator::ZeroRotator,
 	                                                                   SpawnParameters);
+	Character->SpawnDefaultController();
 
 	Character->GetHealthComponent()->OnDeath.AddDynamic(this, &ASPMonstersSpawnerActor::AccrueKillAward);
-	Controller->SetPawn(Character);
-	Controller->Possess(Character);
-
-	FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, false);
-	Controller->AttachToComponent(Character->GetRootComponent(), AttachRules);
 }
 
 void ASPMonstersSpawnerActor::AccrueKillAward(AActor* Killer, AActor* Victim)

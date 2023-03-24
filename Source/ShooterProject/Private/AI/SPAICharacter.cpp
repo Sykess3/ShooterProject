@@ -30,3 +30,4 @@ int32 ASPAICharacter::GetAward() const
 	return Award;
 }
 
+

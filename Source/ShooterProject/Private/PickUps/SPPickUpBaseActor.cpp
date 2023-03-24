@@ -18,7 +18,6 @@ ASPPickUpBaseActor::ASPPickUpBaseActor()
 void ASPPickUpBaseActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ASPPickUpBaseActor::NotifyActorBeginOverlap(AActor* OtherActor)
