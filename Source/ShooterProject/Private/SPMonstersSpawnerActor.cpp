@@ -23,8 +23,8 @@ void ASPMonstersSpawnerActor::BeginPlay()
 	{
 		SpawnMonsterInRandomLocation();
 	}
-	GetWorldTimerManager().SetTimer(RespawnTimer, this, &ASPMonstersSpawnerActor::SpawnMonsterInRandomLocation,
-	                                DelayBetweenSpawns, true, 2);
+	// GetWorldTimerManager().SetTimer(RespawnTimer, this, &ASPMonstersSpawnerActor::SpawnMonsterInRandomLocation,
+	//                                 DelayBetweenSpawns, true, 2);
 }
 
 FMonsterSpawnData ASPMonstersSpawnerActor::GetRandomMonsterSpawnData()
